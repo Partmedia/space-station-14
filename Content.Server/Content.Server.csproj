@@ -11,7 +11,7 @@
     <NoWarn>1998</NoWarn>
     <WarningsAsErrors>nullable</WarningsAsErrors>
     <Nullable>enable</Nullable>
-    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <RL>True</RL>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
@@ -30,4 +30,11 @@
     <Folder Include="Tools\Systems\" />
   </ItemGroup>
   <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />
+  <ItemGroup Condition="'$(RL)' == 'True'">
+    <Content Include="RL/libRL/libRL.so">
+      <Link>libRL.so</Link>
+      <IsAssembly>True</IsAssembly>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

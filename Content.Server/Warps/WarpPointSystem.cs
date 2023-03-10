@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Shared.Examine;
 using Content.Shared.Ghost;
 
@@ -18,5 +19,15 @@ public sealed class WarpPointSystem : EntitySystem
 
         var loc = component.Location == null ? "<null>" : $"'{component.Location}'";
         args.PushText(Loc.GetString("warp-point-component-on-examine-success", ("location", loc)));
+    }
+
+    public EntityUid? FindWarpPoint(string id)
+    {
+        var entMan = IoCManager.Resolve<IEntityManager>();
+        var found = entMan.EntityQuery<WarpPointComponent>(true).Where(p => p.ID == id).FirstOrDefault();
+        if (found is not null)
+            return found.Owner;
+        else
+            return null;
     }
 }

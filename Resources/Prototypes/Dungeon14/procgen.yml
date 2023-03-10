@@ -1,0 +1,6 @@
+- type: tile
+  id: FloorRLMining
+  name: procgen tile (mining)
+  sprite: /Textures/Structures/Walls/rock.rsi/rock.png
+  baseTurf: Plating
+  isSubfloor: true

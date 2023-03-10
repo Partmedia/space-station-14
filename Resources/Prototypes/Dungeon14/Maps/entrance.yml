@@ -1,0 +1,36 @@
+- type: gameMap
+  id: Entrance
+  mapName: 'Dungeon Entrance'
+  mapPath: /Dungeon14/Maps/entrance.yml
+  minPlayers: 0
+  fallback: true
+  stations:
+    Entrance:
+      stationProto: StandardNanotrasenStation
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: '{0} Dungeon Entrance {1}'
+          nameGenerator:
+            !type:NanotrasenNameGenerator
+            prefixCreator: '14'
+        - type: StationEmergencyShuttle
+          emergencyShuttlePath: /Maps/Shuttles/emergency_lox.yml
+        - type: StationJobs
+          overflowJobs:
+            - Passenger
+          availableJobs:
+            # standard mining station
+            Quartermaster: [ 1, 1 ]
+            StationEngineer: [ 1, 1 ]
+            MedicalDoctor: [ 1, 1 ]
+            SalvageSpecialist: [ -1, -1 ]
+            # dungeon RP jobs
+            Bartender: [ 1, 1 ]
+            Chaplain: [ 1, 1 ]
+            Chef: [ 1, 1 ]
+            Chemist: [ 1, 1 ]
+            Clown: [ 1, 1 ]
+            Lawyer: [ 1, 1 ]
+            Mime: [ 1, 1 ]
+            Musician: [ 1, 1 ]
+            CorpSec: [ 1, 1 ]
