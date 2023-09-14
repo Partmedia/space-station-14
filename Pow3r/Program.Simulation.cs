@@ -17,11 +17,13 @@ namespace Pow3r
 
         private readonly string[] _solverNames =
         {
+            nameof(SupplyFactorSolver),
             nameof(BatteryRampPegSolver),
             nameof(NoOpSolver)
         };
 
         private readonly IPowerSolver[] _solvers = {
+            new SupplyFactorSolver(),
             new BatteryRampPegSolver(),
             new NoOpSolver()
         };
