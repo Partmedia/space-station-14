@@ -168,6 +168,7 @@ namespace Content.Server.Power.Pow3r
 
             network.LastCombinedSupply = totalSupply + totalBatterySupply;
             network.LastCombinedMaxSupply = totalMaxSupply + totalMaxBatterySupply;
+            network.LastCombinedDemand = demand;
         }
 
         private void ClearBatteries(PowerState state)
