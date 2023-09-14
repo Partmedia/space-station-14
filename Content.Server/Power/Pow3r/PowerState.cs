@@ -494,6 +494,11 @@ namespace Content.Server.Power.Pow3r
             [ViewVariables] public float LastCombinedSupply = 0f;
 
             /// <summary>
+            ///     Demand, including both normal supplies and batteries.
+            /// </summary>
+            [ViewVariables] public float LastCombinedDemand = 0f;
+
+            /// <summary>
             ///     Theoretical maximum supply, including both normal supplies and batteries.
             /// </summary>
             [ViewVariables] public float LastCombinedMaxSupply = 0f;
