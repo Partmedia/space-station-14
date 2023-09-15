@@ -116,7 +116,7 @@ namespace Content.Server.Power.Pow3r
                 totalMaxSupply += supply.MaxSupply;
 
                 float alpha = 0.1f;
-                supply.SupplyRampTarget *= (1f - supplyRatio) * alpha * frameTime;
+                supply.SupplyRampTarget += (1f - supplyRatio) * alpha * frameTime * supply.MaxSupply;
                 supply.SupplyRampTarget = Math.Clamp(supply.SupplyRampTarget, 0, supply.MaxSupply);
             }
 
