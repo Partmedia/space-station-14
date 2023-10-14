@@ -61,11 +61,9 @@ public sealed class HeatExchangerSystem : EntitySystem
         // Do a little bit of passive heat exchange with both sides. If they are the same, it doesn't matter,
         // we still do the heat transfer.
         var environment = _atmosphereSystem.GetContainingMixture(uid, true, true);
-        _nodeContainer.TryGetNode(nodeContainer, comp.InletName, out PipeNode? inlet);
-        if (inlet != null)
+        if (_nodeContainer.TryGetNode(nodeContainer, comp.InletName, out PipeNode? inlet))
             PassiveExOn(inlet, environment, comp, dt);
-        _nodeContainer.TryGetNode(nodeContainer, comp.OutletName, out PipeNode? outlet);
-        if (outlet != null)
+        if (_nodeContainer.TryGetNode(nodeContainer, comp.OutletName, out PipeNode? outlet))
             PassiveExOn(outlet, environment, comp, dt);
     }
 
