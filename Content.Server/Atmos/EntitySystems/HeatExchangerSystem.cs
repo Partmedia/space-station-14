@@ -50,6 +50,34 @@ public sealed class HeatExchangerSystem : EntitySystem
     }
 
     /// <summary>
+    /// Slow passive heat exchange. This is not only more realistic, but also gives setups with skill issue
+    /// a little indication that radiators are actually working (just not very well).
+    /// </summary>
+    private void PassiveEx(EntityUid uid, HeatExchangerComponent comp, float dt)
+    {
+        if (!TryComp(uid, out NodeContainerComponent? nodeContainer) || !TryComp(uid, out AtmosDeviceComponent? device))
+            return;
+
+        // Do a little bit of passive heat exchange with both sides. If they are the same, it doesn't matter,
+        // we still do the heat transfer.
+        var environment = _atmosphereSystem.GetContainingMixture(uid, true, true);
+        _nodeContainer.TryGetNode(nodeContainer, comp.InletName, out PipeNode? inlet);
+        if (inlet != null)
+            PassiveExOn(inlet, environment, comp, dt);
+        _nodeContainer.TryGetNode(nodeContainer, comp.OutletName, out PipeNode? outlet);
+        if (outlet != null)
+            PassiveExOn(outlet, environment, comp, dt);
+    }
+
+    private void PassiveExOn(PipeNode node, GasMixture? environment, HeatExchangerComponent comp, float dt)
+    {
+        float n = 1;
+        var xfer = node.Air.Remove(n);
+        Exchange(xfer, environment, comp, dt);
+        _atmosphereSystem.Merge(node.Air, xfer);
+    }
+
+    /// <summary>
     /// Fast heat exchange based on flow rate through two ends of the heat exchanger.
     /// </summary>
     private void FlowEx(EntityUid uid, HeatExchangerComponent comp, float dt)
