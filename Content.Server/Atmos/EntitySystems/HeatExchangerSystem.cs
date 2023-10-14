@@ -45,6 +45,15 @@ public sealed class HeatExchangerSystem : EntitySystem
 
     private void OnAtmosUpdate(EntityUid uid, HeatExchangerComponent comp, AtmosDeviceUpdateEvent args)
     {
+        var dt = args.dt;
+        FlowEx(uid, comp, dt);
+    }
+
+    /// <summary>
+    /// Fast heat exchange based on flow rate through two ends of the heat exchanger.
+    /// </summary>
+    private void FlowEx(EntityUid uid, HeatExchangerComponent comp, float dt)
+    {
         if (!TryComp(uid, out NodeContainerComponent? nodeContainer)
                 || !TryComp(uid, out AtmosDeviceComponent? device)
                 || !_nodeContainer.TryGetNode(nodeContainer, comp.InletName, out PipeNode? inlet)
@@ -52,8 +61,6 @@ public sealed class HeatExchangerSystem : EntitySystem
         {
             return;
         }
-
-        var dt = args.dt;
 
         // Let n = moles(inlet) - moles(outlet), really a Δn
         var P = inlet.Air.Pressure - outlet.Air.Pressure; // really a ΔP
@@ -83,13 +90,25 @@ public sealed class HeatExchangerSystem : EntitySystem
         else
             xfer = outlet.Air.Remove(-n);
 
+        var environment = _atmosphereSystem.GetContainingMixture(uid, true, true);
+        Exchange(xfer, environment, comp, dt);
+        if (n > 0)
+            _atmosphereSystem.Merge(outlet.Air, xfer);
+        else
+            _atmosphereSystem.Merge(inlet.Air, xfer);
+    }
+
+    /// <summary>
+    /// Heat exchange between two gas mixtures xfer and environment. xfer and environment are interchangeable unless
+    /// environment is null, in which case xfer gets heat exchanged with space.
+    /// </summary>
+    private void Exchange(GasMixture xfer, GasMixture? environment, HeatExchangerComponent comp, float dt)
+    {
         float CXfer = _atmosphereSystem.GetHeatCapacity(xfer);
         if (CXfer < Atmospherics.MinimumHeatCapacity)
             return;
 
         var radTemp = Atmospherics.TCMB;
-
-        var environment = _atmosphereSystem.GetContainingMixture(uid, true, true);
         bool hasEnv = false;
         float CEnv = 0f;
         if (environment != null)
@@ -131,11 +150,5 @@ public sealed class HeatExchangerSystem : EntitySystem
             _atmosphereSystem.AddHeat(xfer, -dE);
             _atmosphereSystem.AddHeat(environment, dE);
         }
-
-        if (n > 0)
-            _atmosphereSystem.Merge(outlet.Air, xfer);
-        else
-            _atmosphereSystem.Merge(inlet.Air, xfer);
-
     }
 }
