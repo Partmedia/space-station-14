@@ -90,6 +90,7 @@ namespace Content.Server.Atmos.Piping.Unary.EntitySystems
                 thermoMachine.HysteresisState = false; // turn off
             }
             float dQActual = dQ * scale;
+            Logger.InfoS("heater", $"dQ={dQ}, dT={dT}, dQLim={dQLim}, dQActual={dQActual}");
             _atmosphereSystem.AddHeat(inlet.Air, dQActual);
             receiver.Load = thermoMachine.HeatCapacity;// * scale; // we're not ready for dynamic load yet, see note above
         }

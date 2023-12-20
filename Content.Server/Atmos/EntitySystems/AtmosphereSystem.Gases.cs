@@ -106,6 +106,7 @@ namespace Content.Server.Atmos.EntitySystems
         {
             var c = GetHeatCapacity(mixture);
             float dT = dQ / c;
+            Logger.InfoS("atmos", $"c={c}, dT={dT}");
             mixture.Temperature += dT;
         }
 
