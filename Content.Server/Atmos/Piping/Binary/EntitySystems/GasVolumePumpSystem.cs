@@ -86,48 +86,32 @@ namespace Content.Server.Atmos.Piping.Binary.EntitySystems
                 return;
             }
 
-            var inputStartingPressure = inlet.Air.Pressure;
-            var outputStartingPressure = outlet.Air.Pressure;
+            // Diaphragm pump behavior: pump opens to input side and transfers the volume of the
+            // pump to the output. The gas transferred is the fraction of the pump diaphragm
+            // displacement volume (the misnamed "TransferRate") vs the input network times the
+            // input volume.
+            var Vin = inlet.Air.Volume;
+            var Vpump = pump.TransferRate * _atmosphereSystem.PumpSpeedup();
+            var Vtransfer = Vpump / (Vin + Vpump) * Vin;
+            var dV = Vtransfer * args.dt;
 
-            var previouslyBlocked = pump.Blocked;
-            pump.Blocked = false;
-
-            // Pump mechanism won't do anything if the pressure is too high/too low unless you overclock it.
-            if ((inputStartingPressure < pump.LowerThreshold) || (outputStartingPressure > pump.HigherThreshold) && !pump.Overclocked)
-            {
-                pump.Blocked = true;
+            // Calculate work needed to do the pumping. This is what gives us the "soft clogging" behavior.
+            var dP = inlet.Air.Pressure - outlet.Air.Pressure;
+            var W = -dP * dV;
+            var Wactual = W;
+            if (power != null) {
+                var Wmax = power.Load * args.dt;
+                Wactual = MathF.Min(W, Wmax); // can't pump more than we're powered
             }
+            var dVactual = dV * Wactual/W;
 
-            // Overclocked pumps can only force gas a certain amount.
-            if ((outputStartingPressure - inputStartingPressure > pump.OverclockThreshold) && pump.Overclocked)
-            {
-                pump.Blocked = true;
-            }
-
-            if (previouslyBlocked != pump.Blocked)
-                UpdateAppearance(uid, pump);
-            if (pump.Blocked)
-                return;
-
-            // We multiply the transfer rate in L/s by the seconds passed since the last process to get the liters.
-            var removed = inlet.Air.RemoveVolume(pump.TransferRate * _atmosphereSystem.PumpSpeedup() * args.dt);
-
-            // Some of the gas from the mixture leaks when overclocked.
-            if (pump.Overclocked)
-            {
-                var tile = _atmosphereSystem.GetTileMixture(uid, excite: true);
-
-                if (tile != null)
-                {
-                    var leaked = removed.RemoveRatio(pump.LeakRatio);
-                    _atmosphereSystem.Merge(tile, leaked);
-                }
-            }
-
+            var removed = inlet.Air.RemoveVolume(dVactual);
             pump.LastMolesTransferred = removed.TotalMoles;
 
             _atmosphereSystem.Merge(outlet.Air, removed);
+            _atmosphereSystem.AddHeat(outlet.Air, Wactual); // add consumed heat to output net
             _ambientSoundSystem.SetAmbience(uid, removed.TotalMoles > 0f);
+            UpdateAppearance(uid, pump);
         }
 
         private void OnVolumePumpLeaveAtmosphere(EntityUid uid, GasVolumePumpComponent pump, ref AtmosDeviceDisabledEvent args)
