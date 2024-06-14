@@ -178,8 +178,6 @@ namespace Content.Server.Atmos.Piping.Binary.EntitySystems
             bool pumpOn = pump.Enabled && (TryComp<ApcPowerReceiverComponent>(uid, out var power) && power.Powered);
             if (!pumpOn)
                 _appearance.SetData(uid, GasVolumePumpVisuals.State, GasVolumePumpState.Off, appearance);
-            else if (pump.Blocked)
-                _appearance.SetData(uid, GasVolumePumpVisuals.State, GasVolumePumpState.Blocked, appearance);
             else
                 _appearance.SetData(uid, GasVolumePumpVisuals.State, GasVolumePumpState.On, appearance);
         }

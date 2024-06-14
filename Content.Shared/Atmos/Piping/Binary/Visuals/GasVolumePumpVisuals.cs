@@ -13,6 +13,5 @@ namespace Content.Shared.Atmos.Visuals
     {
         Off,
         On,
-        Blocked,
     }
 }

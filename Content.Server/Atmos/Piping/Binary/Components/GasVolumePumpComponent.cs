@@ -9,12 +9,6 @@ namespace Content.Server.Atmos.Piping.Binary.Components
         [DataField("enabled")]
         public bool Enabled { get; set; } = true;
 
-        [DataField("blocked")]
-        public bool Blocked { get; set; } = false;
-
-        [ViewVariables(VVAccess.ReadWrite)]
-        public bool Overclocked { get; set; } = false;
-
         [ViewVariables(VVAccess.ReadWrite)]
         [DataField("inlet")]
         public string InletName { get; set; } = "inlet";
@@ -30,19 +24,6 @@ namespace Content.Server.Atmos.Piping.Binary.Components
         [ViewVariables(VVAccess.ReadWrite)]
         [DataField("maxTransferRate")]
         public float MaxTransferRate { get; set; } = Atmospherics.MaxTransferRate;
-
-        [DataField("leakRatio")]
-        public float LeakRatio { get; set; } = 0.1f;
-
-        [DataField("lowerThreshold")]
-        public float LowerThreshold { get; set; } = 0.01f;
-
-        [DataField("higherThreshold")]
-        public float HigherThreshold { get; set; } = DefaultHigherThreshold;
-        public static readonly float DefaultHigherThreshold = 2 * Atmospherics.MaxOutputPressure;
-
-        [DataField("overclockThreshold")]
-        public float OverclockThreshold { get; set; } = 1000;
 
         [DataField("lastMolesTransferred")]
         public float LastMolesTransferred;

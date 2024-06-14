@@ -28,9 +28,6 @@ namespace Content.Server.Atmos.Piping.Unary.Components
         [DataField("maxTransferRate")]
         public float MaxTransferRate = Atmospherics.MaxTransferRate;
 
-        [DataField("maxPressure")]
-        public float MaxPressure { get; set; } = GasVolumePumpComponent.DefaultHigherThreshold;
-
         [DataField("inlet")]
         public string InletName { get; set; } = "pipe";
     }
