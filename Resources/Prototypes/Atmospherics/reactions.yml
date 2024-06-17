@@ -25,18 +25,12 @@
   id: FrezonCoolant
   priority: 1
   minimumTemperature: 23.15
-  minimumRequirements:
-  - 0     # oxygen
-  - 0.01  # nitrogen
-  - 0     # carbon dioxide
-  - 0     # plasma
-  - 0     # tritium
-  - 0     # vapor
-  - 0     # ammonia
-  - 0     # n2o
-  - 0.01  # frezon
-  effects:
-  - !type:FrezonCoolantReaction {}
+  enthalpy: -600000
+  reactants:
+    Frezon: 1
+    Nitrogen: 5
+  products:
+    NitrousOxide: 6
 
 - type: gasReaction
   id: FrezonProduction
