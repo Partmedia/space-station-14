@@ -87,5 +87,13 @@ namespace Content.Server.Atmos.Reactions
 
             return result;
         }
+
+        /// <summary>
+        /// Return true if the reaction is a YAML gas reaction, false if it is an old C# reaction.
+        /// </summary>
+        public bool IsYamlReaction()
+        {
+            return Reactants.Count != 0;
+        }
     }
 }

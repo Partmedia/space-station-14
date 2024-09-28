@@ -321,7 +321,8 @@ namespace Content.Server.Atmos.EntitySystems
 
             foreach (var prototype in GasReactions)
             {
-                if (energy < prototype.MinimumEnergyRequirement ||
+                if (prototype.IsYamlReaction() || // handle YAML reactions later
+                    energy < prototype.MinimumEnergyRequirement ||
                     temperature < prototype.MinimumTemperatureRequirement ||
                     temperature > prototype.MaximumTemperatureRequirement)
                     continue;

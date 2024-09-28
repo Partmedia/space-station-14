@@ -51,7 +51,7 @@ public sealed class GenericGasReactionSystem : EntitySystem
         foreach (var reaction in reactions)
         {
             // Check if this is a generic YAML reaction (has reactants)
-            if (reaction.Reactants.Count == 0)
+            if (!reaction.IsYamlReaction())
                 continue;
 
             // Add concentration-dependent reaction rate
