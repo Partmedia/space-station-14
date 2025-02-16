@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Server.Atmos;
 using Content.Server.Atmos.EntitySystems;
+using Content.Server.Destructible;
 using Content.Server.NodeContainer.Nodes;
 using Content.Shared.Atmos;
 using Content.Shared.Damage;
@@ -24,6 +25,7 @@ namespace Content.Server.NodeContainer.NodeGroups
 
         [ViewVariables] private AtmosphereSystem? _atmosphereSystem;
         [ViewVariables] private DamageableSystem? _damage;
+        [ViewVariables] private DestructibleSystem? _destroy;
         [ViewVariables] private IEntityManager? _entMan;
         [ViewVariables] private IRobustRandom? _random;
 
@@ -54,10 +56,10 @@ namespace Content.Server.NodeContainer.NodeGroups
         /// </summary>
         private int PressureDamage(PipeNode pipe)
         {
-            const float tau = 10; // number of atmos ticks to break pipe at nominal overpressure
+            const float ticksToBreak = 10; // number of atmos ticks to break pipe at nominal overpressure
             var diff = pipe.Air.Pressure - pipe.MaxPressure;
-            const float alpha = 100/tau;
-            return diff > 0 ? (int)(alpha*float.Exp(diff / pipe.MaxPressure)) : 0;
+            const float nominalDamage = 100 / ticksToBreak;
+            return diff > 0 ? (int)(nominalDamage * float.Exp(diff / pipe.MaxPressure)) : 0;
         }
 
         public void Update()
@@ -72,21 +74,25 @@ namespace Content.Server.NodeContainer.NodeGroups
                     // Prefer damaging pipes that are already damaged. This means that only one pipe
                     // fails instead of the whole pipenet bursting at the same time.
                     const float baseChance = 0.5f;
-                    float p = baseChance;
-                    if (_entMan != null && _entMan.TryGetComponent<DamageableComponent>(pipe.Owner, out var damage))
+                    float prob = baseChance;
+                    if (_entMan != null
+                        && _entMan.TryGetComponent<DamageableComponent>(pipe.Owner, out var damage)
+                        && _destroy != null
+                        && _destroy.TryGetDestroyedAt(pipe.Owner, out var maxDamage))
                     {
-                        p += (float)damage.TotalDamage * (1 - baseChance);
+                        var damageRatio = (float)damage.TotalDamage / (float)maxDamage;
+                        prob += damageRatio * (1 - baseChance);
                     }
 
-                    if (_random != null && _random.Prob(1-p))
+                    if (_random != null && _random.Prob(1 - prob))
                         continue;
 
-                    int dam = PressureDamage(pipe);
-                    if (dam > 0)
+                    int damageInflicted = PressureDamage(pipe);
+                    if (damageInflicted > 0)
                     {
-                        var dspec = new DamageSpecifier();
-                        dspec.DamageDict.Add("Structural", dam);
-                        _damage?.TryChangeDamage(pipe.Owner, dspec);
+                        var damageSpec = new DamageSpecifier();
+                        damageSpec.DamageDict.Add("Structural", damageInflicted);
+                        _damage?.TryChangeDamage(pipe.Owner, damageSpec);
                     }
                 }
             }
