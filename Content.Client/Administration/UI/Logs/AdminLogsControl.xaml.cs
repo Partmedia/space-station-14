@@ -291,10 +291,6 @@ public sealed partial class AdminLogsControl : Control
         if (!SelectedImpacts.Contains(label.Log.Impact))
             return false;
 
-        // Check search
-        if (!label.Log.Message.Contains(LogSearch.Text, StringComparison.OrdinalIgnoreCase))
-            return false;
-
         return true;
     }
 
