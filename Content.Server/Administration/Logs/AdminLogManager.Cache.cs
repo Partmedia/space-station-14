@@ -97,7 +97,11 @@ public sealed partial class AdminLogManager
 
         if (filter.Search != null)
         {
-            query = query.Where(log => log.Message.Contains(filter.Search, StringComparison.OrdinalIgnoreCase));
+            var terms = filter.Search.Split(" and ");
+            foreach (var term in terms)
+            {
+                query = query.Where(log => log.Message.Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         if (filter.Types != null && filter.Types.Count != _logTypes)

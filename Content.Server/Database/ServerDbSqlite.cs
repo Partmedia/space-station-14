@@ -485,8 +485,13 @@ namespace Content.Server.Database
         {
             IQueryable<AdminLog> query = db.AdminLog;
             if (filter?.Search != null)
-                query = query.Where(log => EF.Functions.Like(log.Message, $"%{filter.Search}%"));
-
+            {
+                var terms = filter.Search.Split(" and ");
+                foreach (var term in terms)
+                {
+                    query = query.Where(log => EF.Functions.Like(log.Message, $"%{term}%"));
+                }
+            }
             return query;
         }
 
