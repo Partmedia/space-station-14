@@ -38,5 +38,5 @@ jobs:
       run: dotnet build --configuration Release --no-restore /m
 
     - name: Run Benchmarks
-      run: dotnet run --project Content.Benchmarks --filter 'DeltaPressureBenchmark --configuration Release
+      run: dotnet run --project Content.Benchmarks --filter 'DeltaPressureBenchmark' --configuration Release
 
