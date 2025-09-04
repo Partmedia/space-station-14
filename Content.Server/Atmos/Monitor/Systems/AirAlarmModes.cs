@@ -59,6 +59,7 @@ public sealed class AirAlarmModeFactory
     private static IAirAlarmMode _wideFilterMode = new AirAlarmWideFilterMode();
     private static IAirAlarmMode _fillMode = new AirAlarmFillMode();
     private static IAirAlarmMode _panicMode = new AirAlarmPanicMode();
+    private static IAirAlarmMode _replaceMode = new AirAlarmReplaceMode();
     private static IAirAlarmMode _noneMode = new AirAlarmNoneMode();
 
     // still not a fan since ReplaceMode must have an allocation
@@ -71,6 +72,7 @@ public sealed class AirAlarmModeFactory
             AirAlarmMode.WideFiltering => _wideFilterMode,
             AirAlarmMode.Fill => _fillMode,
             AirAlarmMode.Panic => _panicMode,
+            AirAlarmMode.Replace => _replaceMode,
             AirAlarmMode.None => _noneMode,
             _ => null
         };
@@ -188,6 +190,25 @@ public sealed class AirAlarmFillMode : AirAlarmModeExecutor
         foreach (var (addr, device) in alarm.ScrubberData)
         {
             AirAlarmSystem.SetData(uid, addr, GasVentScrubberData.FillModePreset);
+        }
+    }
+}
+
+public sealed class AirAlarmReplaceMode : AirAlarmModeExecutor
+{
+    public override void Execute(EntityUid uid)
+    {
+        if (!EntityManager.TryGetComponent(uid, out AirAlarmComponent? alarm))
+            return;
+
+        foreach (var (addr, device) in alarm.VentData)
+        {
+            AirAlarmSystem.SetData(uid, addr, GasVentPumpData.FillModePreset);
+        }
+
+        foreach (var (addr, device) in alarm.ScrubberData)
+        {
+            AirAlarmSystem.SetData(uid, addr, GasVentScrubberData.PanicModePreset);
         }
     }
 }

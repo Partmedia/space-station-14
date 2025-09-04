@@ -16,6 +16,7 @@ public enum AirAlarmMode
     WideFiltering,
     Fill,
     Panic,
+    Replace,
 }
 
 [Serializable, NetSerializable]

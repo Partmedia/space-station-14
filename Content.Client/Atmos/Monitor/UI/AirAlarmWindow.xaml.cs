@@ -57,6 +57,7 @@ public sealed partial class AirAlarmWindow : FancyWindow
                 AirAlarmMode.WideFiltering => "air-alarm-ui-mode-wide-filtering",
                 AirAlarmMode.Fill => "air-alarm-ui-mode-fill",
                 AirAlarmMode.Panic => "air-alarm-ui-mode-panic",
+                AirAlarmMode.Replace => "air-alarm-ui-mode-replace",
                 AirAlarmMode.None => "air-alarm-ui-mode-none",
                 _ => "error",
             };
