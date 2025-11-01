@@ -20,6 +20,7 @@ public static class ServerPackaging
         new PlatformReg("osx-arm64", "MacOS", true),
         // Non-default platforms (i.e. for Watchdog Git)
         new PlatformReg("freebsd-x64", "FreeBSD", false),
+        new PlatformReg("freebsd.14-x64", "FreeBSD", false),
     };
 
     private static IReadOnlySet<string> ServerContentIgnoresResources { get; } = new HashSet<string>
