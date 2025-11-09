@@ -105,7 +105,7 @@ public sealed class StationPowerTests
         var apcQuery = entMan.EntityQueryEnumerator<ApcComponent, PowerNetworkBatteryComponent>();
         while (apcQuery.MoveNext(out var uid, out var apc, out var battery))
         {
-            Logger.Info($"{mapProtoId}: {battery.CurrentSupply} / {apc.MaxLoad}");
+            Console.WriteLine($"{mapProtoId}: {battery.CurrentSupply} / {apc.MaxLoad}");
             Assert.That(apc.MaxLoad, Is.GreaterThanOrEqualTo(battery.CurrentSupply),
                     $"APC on {mapProtoId} is overloaded");
         }
