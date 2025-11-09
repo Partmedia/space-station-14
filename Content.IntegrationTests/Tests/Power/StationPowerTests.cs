@@ -100,6 +100,13 @@ public sealed class StationPowerTests
                 $"Needs at least {requiredStoredPower - totalStartingCharge} more stored power!");
         });
 
+        // Check that no APCs start overloaded
+        var apcQuery = entMan.EntityQueryEnumerator<ApcComponent, PowerNetworkBatteryComponent>();
+        while (apcQuery.MoveNext(out var uid, out var apc, out var battery))
+        {
+            Assert.That(apc.MaxLoad, Is.GreaterThanOrEqualTo(battery.CurrentSupply),
+                    $"APC on {mapProtoId} is overloaded");
+        }
 
         await pair.CleanReturnAsync();
     }
