@@ -90,7 +90,7 @@ public sealed class StationPowerTests
 
         var estimatedDuration = totalStartingCharge / totalAPCLoad;
         var requiredStoredPower = totalAPCLoad * MinimumPowerDurationSeconds;
-#if 0
+        /*
         Assert.Multiple(() =>
         {
             Assert.That(estimatedDuration, Is.GreaterThanOrEqualTo(MinimumPowerDurationSeconds),
@@ -99,7 +99,7 @@ public sealed class StationPowerTests
             Assert.That(totalStartingCharge, Is.GreaterThanOrEqualTo(requiredStoredPower),
                 $"Needs at least {requiredStoredPower - totalStartingCharge} more stored power!");
         });
-#endif
+        */
 
         // Check that no APCs start overloaded
         var apcQuery = entMan.EntityQueryEnumerator<ApcComponent, PowerNetworkBatteryComponent>();
